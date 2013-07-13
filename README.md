@@ -10,4 +10,6 @@ TODO
 - add unit tests
 - add Some (Scala)
 - add property checker (or something, for objects)
-- add list checker
+- add list, tuple (abstract from there) checkers
+- use inspect.isclass to enable type checking with examples
+- add require_args
