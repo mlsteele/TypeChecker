@@ -12,13 +12,17 @@ def typecheck_args(*args_types, **kwargs_types):
             # check arguments
             for (arg, required_type) in zip(args, args_types):
                 if not isinstance(arg, required_type):
-                    msg = "Argument of type {} where type {} was required.".format(type(arg), required_type)
+                    msg = "Argument of type '{}' where type '{}' was required.".format(type(arg), required_type)
                     raise ArgumentTypeError(msg)
 
             # check kwarguments
             for key in kwargs_types:
+                if not key in kwargs:
+                    msg = "Missing kwarg '{}'".format(key)
+                    raise ArgumentTypeError(msg)
+
                 if not isinstance(kwargs[key], kwargs_types[key]):
-                    msg = "Kwargument of type {} where type {} was required.".format(type(arg), required_type)
+                    msg = "Kwargument '{}' of type '{}' where type '{}' was required.".format(key, type(arg), required_type)
                     raise ArgumentTypeError(msg)
 
             # run original function
@@ -35,5 +39,15 @@ def takes_int_outputs_string(n):
         return 404
 
 
+@typecheck_args(int, foo=type(""))
+def takes_int_and_kwarg_string_outputs_string(n, foo=4):
+    if isinstance(n, int) and isinstance(foo, type("")):
+        return "a-ok!"
+    else:
+        return 404
+
+
 print takes_int_outputs_string(1)
-print takes_int_outputs_string("bad")
+# print takes_int_outputs_string("bad")
+
+print takes_int_and_kwarg_string_outputs_string(1, foo='bang')
