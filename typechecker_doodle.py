@@ -6,10 +6,16 @@ class ArgumentTypeError(TypeCheckError):
     pass
 
 
-def typecheck_args(*args_types, **kwargs_types):
+class ReturnTypeError(TypeCheckError):
+    pass
+
+
+def typecheck_arguments(*args_types, **kwargs_types):
     """
     Require that the args and kwargs of the decorated function
     match the specified types.
+
+    Throws ArgumentTypeError if there is a type mismatch.
     """
     def decorator(func):
         def wrapper(*args, **kwargs):
@@ -35,7 +41,28 @@ def typecheck_args(*args_types, **kwargs_types):
     return decorator
 
 
-@typecheck_args(int)
+def typecheck_return(return_type):
+    """
+    Require that the args and kwargs of the decorated function
+    match the specified types.
+
+    Throws ReturnTypeError if there is a type mismatch.
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            retval = func(*args, **kwargs)
+
+            # check return type
+            if not isinstance(retval, return_type):
+                msg = "Return type of '{}' where type '{}' was required.".format(type(retval), return_type)
+                raise ReturnTypeError(msg)
+
+            return retval
+        return wrapper
+    return decorator
+
+
+@typecheck_arguments(int)
 def takes_int_outputs_string(n):
     if isinstance(n, int):
         return "a-ok!"
@@ -43,7 +70,8 @@ def takes_int_outputs_string(n):
         return 404
 
 
-@typecheck_args(int, foo=type(""))
+@typecheck_arguments(int, foo=type(""))
+@typecheck_return(str)
 def takes_int_and_kwarg_string_outputs_string(n, foo=4):
     if isinstance(n, int) and isinstance(foo, type("")):
         return "a-ok!"
