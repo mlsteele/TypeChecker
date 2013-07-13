@@ -11,7 +11,7 @@ Useful as a debugging and inline testing tool.
 """
 
 
-class TypeCheckError(Exception):
+class TypeCheckError(TypeError):
     """ Base exception for typechecker """
     pass
 
@@ -26,6 +26,12 @@ class ReturnTypeError(TypeCheckError):
 
 class ExceptionTypeError(TypeCheckError):
     """ Exception for incorrect exception type. """
+
+
+# Exceptions to ignore in typecheck_exception.
+WHITELIST_EXCEPTIONS = (TypeError,)
+# whitelist TypeError to preserve "takes at least n arguments (n-1 given)" errors.
+# whitelisting TypeError takes care of exceptions defined typechecker
 
 
 def typecheck_arguments(*args_types, **kwargs_types):
@@ -50,7 +56,7 @@ def typecheck_arguments(*args_types, **kwargs_types):
                     raise ArgumentTypeError(msg)
 
                 if not isinstance(kwargs[key], kwargs_types[key]):
-                    msg = "Kwargument '{}' of type '{}' where type '{}' was required.".format(key, type(arg), required_type)
+                    msg = "Kwargument '{}' of type '{}' where type '{}' was required.".format(key, type(kwargs[key]), kwargs_types[key])
                     raise ArgumentTypeError(msg)
 
             # run original function
@@ -95,7 +101,7 @@ def typecheck_exception(*exception_types):
                 return func(*args, **kwargs)
             except Exception as exc:
                 ok = any([isinstance(exc, exc_type)
-                          for exc_type in exception_types])
+                          for exc_type in exception_types + WHITELIST_EXCEPTIONS])
                 if ok:
                     raise exc
                 else:
