@@ -10,21 +10,22 @@ Provides decorators for type checking
 Useful as a debugging and inline testing tool.
 """
 
-# Exceptions
+
 class TypeCheckError(Exception):
+    """ Base exception for typechecker """
     pass
 
 
 class ArgumentTypeError(TypeCheckError):
-    pass
+    """ Exception for incorrect argument type. """
 
 
 class ReturnTypeError(TypeCheckError):
-    pass
+    """ Exception for incorrect return type. """
 
 
 class ExceptionTypeError(TypeCheckError):
-    pass
+    """ Exception for incorrect exception type. """
 
 
 def typecheck_arguments(*args_types, **kwargs_types):
