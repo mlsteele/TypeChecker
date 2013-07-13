@@ -1,4 +1,4 @@
-from typechecker import typecheck_arguments, typecheck_return
+from typechecker import typecheck_arguments, typecheck_return, typecheck_exception
 
 
 @typecheck_arguments(int)
@@ -18,7 +18,14 @@ def takes_int_and_kwarg_string_outputs_string(n, foo=4):
         return 404
 
 
+@typecheck_exception(NameError, ValueError)
+def can_throw_a_thing():
+    raise ValueError("omg a value error")
+
+
 print takes_int_outputs_string(1)
 # print takes_int_outputs_string("bad")
 
 print takes_int_and_kwarg_string_outputs_string(1, foo='bang')
+
+print can_throw_a_thing()

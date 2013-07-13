@@ -10,6 +10,10 @@ class ReturnTypeError(TypeCheckError):
     pass
 
 
+class ExceptionTypeError(TypeCheckError):
+    pass
+
+
 def typecheck_arguments(*args_types, **kwargs_types):
     """
     Require that the args and kwargs of the decorated function
@@ -54,9 +58,34 @@ def typecheck_return(return_type):
 
             # check return type
             if not isinstance(retval, return_type):
-                msg = "Return type of '{}' where type '{}' was required.".format(type(retval), return_type)
+                msg = "Return of type '{}' where type '{}' was required.".format(type(retval), return_type)
                 raise ReturnTypeError(msg)
 
             return retval
+        return wrapper
+    return decorator
+
+
+def typecheck_exception(*exception_types):
+    """
+    Require that IF the decorated function raises and Exception
+        THEN it be derived from on of those in `*exception_types`
+
+    Throws the original exception if all goes well,
+    Throws ExceptionTypeError if a non-matching exception
+        is thrown by the decorated function.
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as exc:
+                ok = any([isinstance(exc, exc_type)
+                          for exc_type in exception_types])
+                if ok:
+                    raise exc
+                else:
+                    msg = "Exception of type '{}' is not one of the allowed exception types.".format(type(exc))
+                    raise ExceptionTypeError(msg)
         return wrapper
     return decorator
