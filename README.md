@@ -6,7 +6,7 @@ Python type checker.
 Provides decorators for type checking arguments and return values.
 
 TODO
-- refactor
+- add preparser to enable or sosomething
 - add unit tests
 - add Some (Scala)
 - add property checker (or something, for objects)

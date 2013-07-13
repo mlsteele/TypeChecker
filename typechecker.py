@@ -1,3 +1,16 @@
+"""
+TypeChecker
+
+Python type checking.
+Provides decorators for type checking
+- arguments
+- return values
+- exceptions
+
+Useful as a debugging and inline testing tool.
+"""
+
+# Exceptions
 class TypeCheckError(Exception):
     pass
 
