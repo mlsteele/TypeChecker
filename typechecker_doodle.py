@@ -7,6 +7,10 @@ class ArgumentTypeError(TypeCheckError):
 
 
 def typecheck_args(*args_types, **kwargs_types):
+    """
+    Require that the args and kwargs of the decorated function
+    match the specified types.
+    """
     def decorator(func):
         def wrapper(*args, **kwargs):
             # check arguments
